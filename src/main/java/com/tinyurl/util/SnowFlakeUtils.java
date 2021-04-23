@@ -1,6 +1,5 @@
 package com.tinyurl.util;
 
-import org.hashids.Hashids;
 
 /**
  * 雪花算法生成唯一ID
@@ -101,7 +100,6 @@ public class SnowFlakeUtils {
 
     public static void main(String[] args) {
         SnowFlakeUtils snowFlake = new SnowFlakeUtils(2, 3);
-        Hashids hashids = new Hashids(salt);
         long start = System.currentTimeMillis();
         for (int i = 0; i < 1000000; i++) {
             System.out.println(Base58Utils.encodeBase58(snowFlake.nextId()));

@@ -18,9 +18,14 @@ public class TinyUrlProperties {
     private long size = 100000;
 
     /**
-     * ttl,默认秒
+     * 读过期时间,默认秒
      */
-    private int ttl = 3600;
+    private int readTimeOut = 3600;
+
+    /**
+     * 写过期时间,默认秒
+     */
+    private int writeTimeOut = 3600;
 
     /**
      * 短链接域名
@@ -35,12 +40,20 @@ public class TinyUrlProperties {
         this.size = size;
     }
 
-    public int getTtl() {
-        return ttl;
+    public int getReadTimeOut() {
+        return readTimeOut;
     }
 
-    public void setTtl(int ttl) {
-        this.ttl = ttl;
+    public void setReadTimeOut(int readTimeOut) {
+        this.readTimeOut = readTimeOut;
+    }
+
+    public int getWriteTimeOut() {
+        return writeTimeOut;
+    }
+
+    public void setWriteTimeOut(int writeTimeOut) {
+        this.writeTimeOut = writeTimeOut;
     }
 
     public String getTinyHost() {
