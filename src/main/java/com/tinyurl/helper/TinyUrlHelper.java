@@ -26,6 +26,7 @@ public class TinyUrlHelper {
 
     private static TinyUrlCacheService tinyUrlCacheService;
 
+    // 分布式中可以通过Redis指定数据中心和机器标识
     private static SnowFlakeUtils snowFlakeUtils = new SnowFlakeUtils(1, 2);
 
     public TinyUrlHelper(TinyUrlProperties tinyUrlProperties,
