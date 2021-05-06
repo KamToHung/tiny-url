@@ -34,6 +34,16 @@ public class TinyUrlProperties {
     private int writeTimeOut = 3600;
 
     /**
+     * 数据中心
+     */
+    private long datacenterId = 0;
+
+    /**
+     * 机器标识
+     */
+    private long machineId = 0;
+
+    /**
      * 短链接域名
      */
     private String tinyHost = "http://127.0.0.1:8080";
@@ -65,6 +75,22 @@ public class TinyUrlProperties {
 
     public void setWriteTimeOut(int writeTimeOut) {
         this.writeTimeOut = writeTimeOut;
+    }
+
+    public long getDatacenterId() {
+        return datacenterId;
+    }
+
+    public void setDatacenterId(long datacenterId) {
+        this.datacenterId = datacenterId;
+    }
+
+    public long getMachineId() {
+        return machineId;
+    }
+
+    public void setMachineId(long machineId) {
+        this.machineId = machineId;
     }
 
     public String getTinyHost() {

@@ -20,6 +20,8 @@ com:
   tinyurl:
     read-time-out: 3600
     write-time-out: 3600
+    datacenter-id: 1
+    machine-id: 1
     tiny-host: http://127.0.0.1:8080
     tiny-url-redis:
       database: 12
