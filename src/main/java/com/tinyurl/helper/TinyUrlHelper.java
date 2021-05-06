@@ -1,7 +1,6 @@
 package com.tinyurl.helper;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.tinyurl.cache.TinyUrlCacheService;
 import com.tinyurl.config.TinyUrlProperties;
 import com.tinyurl.entity.TinyUrl;
 import com.tinyurl.service.TinyUrlService;
@@ -21,24 +20,20 @@ import java.time.Instant;
 @Component
 public class TinyUrlHelper {
 
-    private static LoadingCache<String, String> readTinyUrlCache;
-
-    private static Cache<String, String> writeTinyUrlCache;
-
     private static TinyUrlProperties tinyUrlProperties;
 
     private static TinyUrlService tinyUrlService;
 
+    private static TinyUrlCacheService tinyUrlCacheService;
+
     private static SnowFlakeUtils snowFlakeUtils = new SnowFlakeUtils(1, 2);
 
-    public TinyUrlHelper(LoadingCache<String, String> readTinyUrlCache,
-                         Cache<String, String> writeTinyUrlCache,
-                         TinyUrlProperties tinyUrlProperties,
-                         TinyUrlService tinyUrlService) {
-        TinyUrlHelper.readTinyUrlCache = readTinyUrlCache;
-        TinyUrlHelper.writeTinyUrlCache = writeTinyUrlCache;
+    public TinyUrlHelper(TinyUrlProperties tinyUrlProperties,
+                         TinyUrlService tinyUrlService,
+                         TinyUrlCacheService tinyUrlCacheService) {
         TinyUrlHelper.tinyUrlProperties = tinyUrlProperties;
         TinyUrlHelper.tinyUrlService = tinyUrlService;
+        TinyUrlHelper.tinyUrlCacheService = tinyUrlCacheService;
     }
 
     /**
@@ -51,7 +46,7 @@ public class TinyUrlHelper {
      * @return
      */
     public static String genTinyUrl(String url, int ttl, String ip) {
-        String id = writeTinyUrlCache.getIfPresent(url);
+        String id = tinyUrlCacheService.getWriteCache(url);
         if (id != null) {
             return tinyUrlProperties.getTinyHost() + "/" + id;
         }
@@ -67,7 +62,7 @@ public class TinyUrlHelper {
         tinyUrl.setState(1);
         tinyUrlService.save(tinyUrl);
         String base58Id = Base58Utils.encodeBase58(Base58Utils.encodeNum(nextId));
-        writeTinyUrlCache.put(url, base58Id);
+        tinyUrlCacheService.putWriteCache(url, base58Id);
         return tinyUrlProperties.getTinyHost() + "/" + base58Id;
     }
 
@@ -78,6 +73,6 @@ public class TinyUrlHelper {
      * @return
      */
     public static String getUrl(String tinyCode) {
-        return readTinyUrlCache.get(tinyCode);
+        return tinyUrlCacheService.getReadCache(tinyCode);
     }
 }

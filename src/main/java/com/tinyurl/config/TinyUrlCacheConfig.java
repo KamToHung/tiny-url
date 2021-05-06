@@ -5,9 +5,18 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.tinyurl.service.TinyUrlService;
 import com.tinyurl.util.Base58Utils;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import io.lettuce.core.resource.ClientResources;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisPassword;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.util.concurrent.TimeUnit;
 
@@ -53,10 +62,64 @@ public class TinyUrlCacheConfig {
      * @return
      */
     @Bean
-    public Cache<Object, Object> writeTinyUrlCache(final TinyUrlProperties tinyUrlProperties) {
+    public Cache<String, String> writeTinyUrlCache(final TinyUrlProperties tinyUrlProperties) {
         return Caffeine.newBuilder()
                 .expireAfterWrite(tinyUrlProperties.getWriteTimeOut(), TimeUnit.SECONDS)
                 .recordStats().build();
+    }
+
+
+    @Bean("tinyUrlRedisTemplate")
+    public StringRedisTemplate tinyUrlRedisTemplate(final TinyUrlProperties tinyUrlProperties,
+                                                    final ClientResources clientResources) {
+        StringRedisTemplate stringRedisTemplate = new StringRedisTemplate();
+        stringRedisTemplate.setConnectionFactory(redisConnectionFactory(tinyUrlProperties.getTinyUrlRedis(), clientResources));
+        stringRedisTemplate.afterPropertiesSet();
+        return stringRedisTemplate;
+    }
+
+    /**
+     * Redis连接工厂
+     *
+     * @param redisProperties redis配置属性
+     * @param clientResources clientResources
+     * @return RedisConnectionFactory
+     */
+    private RedisConnectionFactory redisConnectionFactory(TinyUrlProperties.RedisProperties redisProperties,
+                                                          ClientResources clientResources) {
+        RedisProperties.Pool pool = redisProperties.getLettuce().getPool();
+        LettuceClientConfiguration.LettuceClientConfigurationBuilder builder;
+        if (pool == null) {
+            builder = LettuceClientConfiguration.builder();
+        } else {
+            GenericObjectPoolConfig config = new GenericObjectPoolConfig();
+            config.setMaxTotal(pool.getMaxActive());
+            config.setMaxIdle(pool.getMaxIdle());
+            config.setMinIdle(pool.getMinIdle());
+            if (pool.getMaxWait() != null) {
+                config.setMaxWaitMillis(pool.getMaxWait().toMillis());
+            }
+            builder = LettucePoolingClientConfiguration.builder().poolConfig(config);
+        }
+        if (redisProperties.getTimeout() != null) {
+            builder.commandTimeout(redisProperties.getTimeout());
+        }
+        if (redisProperties.getLettuce() != null) {
+            RedisProperties.Lettuce lettuce = redisProperties.getLettuce();
+            if (lettuce.getShutdownTimeout() != null && !lettuce.getShutdownTimeout().isZero()) {
+                builder.shutdownTimeout(redisProperties.getLettuce().getShutdownTimeout());
+            }
+        }
+        builder.clientResources(clientResources);
+        LettuceClientConfiguration config = builder.build();
+        RedisStandaloneConfiguration standaloneConfig = new RedisStandaloneConfiguration();
+        standaloneConfig.setHostName(redisProperties.getHost());
+        standaloneConfig.setPort(redisProperties.getPort());
+        standaloneConfig.setPassword(RedisPassword.of(redisProperties.getPassword()));
+        standaloneConfig.setDatabase(redisProperties.getDatabase());
+        LettuceConnectionFactory factory = new LettuceConnectionFactory(standaloneConfig, config);
+        factory.afterPropertiesSet();
+        return factory;
     }
 
 }

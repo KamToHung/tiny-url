@@ -1,5 +1,6 @@
 package com.tinyurl.config;
 
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import sun.misc.Unsafe;
@@ -14,7 +15,6 @@ import java.util.List;
  *
  * @author axeon
  */
-@Configuration
 @ConfigurationProperties(prefix = "com.tinyurl")
 public class TinyUrlProperties {
 
@@ -37,6 +37,11 @@ public class TinyUrlProperties {
      * 短链接域名
      */
     private String tinyHost = "http://127.0.0.1:8080";
+
+    /**
+     * 短链接Redis缓存
+     */
+    private RedisProperties tinyUrlRedis = new RedisProperties();
 
     public long getSize() {
         return size;
@@ -68,6 +73,17 @@ public class TinyUrlProperties {
 
     public void setTinyHost(String tinyHost) {
         this.tinyHost = tinyHost;
+    }
+
+    public RedisProperties getTinyUrlRedis() {
+        return tinyUrlRedis;
+    }
+
+    public void setTinyUrlRedis(RedisProperties tinyUrlRedis) {
+        this.tinyUrlRedis = tinyUrlRedis;
+    }
+
+    public static class RedisProperties extends org.springframework.boot.autoconfigure.data.redis.RedisProperties {
     }
 
 }
