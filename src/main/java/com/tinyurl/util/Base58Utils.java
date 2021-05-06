@@ -89,29 +89,4 @@ public class Base58Utils {
         return Long.parseLong(data.substring(pos + 1) + data.substring(1, pos + 1));
     }
 
-    public static void main(String[] args) {
-//        long time = System.currentTimeMillis();
-//        System.out.println("16进制结果" + Long.toUnsignedString(time, 16));
-//        System.out.println("36进制结果" + Long.toUnsignedString(time, 36));
-//        System.out.println("58进制结果" + decodeLong("ocPEU"));
-//        System.out.println(encodeNum(12345678));
-//        System.out.println(decodeNum(encodeNum(10000001)));
-        System.out.println(decodeBase58("9pkLS"));
-        System.out.println(decodeNum(decodeBase58("9pkLS")));
-
-//        for (int i = 23314894; i < 23314994; i++) {
-//            System.out.println(encodeBase58(encodeNum(i)));
-//            System.out.println(decodeNum(decodeBase58("rz4tB")));
-//        }
-//
-//        List<Character> list = new ArrayList<>();
-//        for (char c : DIGITS_58_CODES) {
-//            list.add(c);
-//        }
-//        Collections.shuffle(list);
-//        for (Character c : list) {
-//            System.out.print("'" + c + "',");
-//        }
-    }
-
 }

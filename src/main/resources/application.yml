@@ -1,0 +1,18 @@
+spring:
+  jpa:
+    database: mysql
+    show-sql: true
+  datasource:
+    url: jdbc:mysql://dev.xili.pub:3308/saas?characterEncoding=utf-8&useSSL=false&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true
+    username: root
+    password: '5qNzkIl8i%7K7c*09G*MqaQR9BvoSuY@'
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      auto-commit: true
+      minimum-idle: 2
+      idle-timeout: 30000
+      connection-timeout: 30000
+      max-lifetime: 1800000
+      pool-name: TinyUrlHikari
+      maximum-pool-size: 20

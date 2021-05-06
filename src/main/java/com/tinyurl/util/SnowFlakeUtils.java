@@ -96,17 +96,4 @@ public class SnowFlakeUtils {
 
     private static final String salt = "ZOWOYOO";
 
-
-
-    public static void main(String[] args) {
-        SnowFlakeUtils snowFlake = new SnowFlakeUtils(2, 3);
-        long start = System.currentTimeMillis();
-        for (int i = 0; i < 1000000; i++) {
-            System.out.println(Base58Utils.encodeBase58(snowFlake.nextId()));
-        }
-        System.out.println(System.currentTimeMillis() - start);
-
-
-    }
-
 }

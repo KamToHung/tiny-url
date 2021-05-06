@@ -2,6 +2,12 @@ package com.tinyurl.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import sun.misc.Unsafe;
+
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 配置类。
@@ -30,7 +36,7 @@ public class TinyUrlProperties {
     /**
      * 短链接域名
      */
-    private String tinyHost = "http://127.0.0.1";
+    private String tinyHost = "http://127.0.0.1:8080";
 
     public long getSize() {
         return size;
@@ -63,4 +69,5 @@ public class TinyUrlProperties {
     public void setTinyHost(String tinyHost) {
         this.tinyHost = tinyHost;
     }
+
 }
